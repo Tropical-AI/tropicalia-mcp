@@ -33,7 +33,9 @@ const SearchArgsSchema = z.object({
   strategy: z
     .enum(["hybrid", "neural", "keyword"])
     .optional()
-    .describe("Retrieval strategy: 'hybrid' (default), 'neural' for semantic, 'keyword' for exact match"),
+    .describe(
+      "Retrieval strategy: 'hybrid' (default), 'neural' for semantic, 'keyword' for exact match",
+    ),
   limit: z
     .number()
     .min(1)
@@ -68,14 +70,14 @@ export function registerSearchTool(server: McpServer, context?: McpContext) {
       if (!apiKey) {
         return formatSearchError(
           new Error("No API key provided. Set TROPICALIA_API_KEY env var."),
-          { projectId, query: args.query }
+          { projectId, query: args.query },
         );
       }
 
       if (!projectId) {
         return formatSearchError(
           new Error("TROPICALIA_PROJECT env var not set"),
-          { query: args.query }
+          { query: args.query },
         );
       }
 
@@ -109,9 +111,12 @@ export function registerSearchTool(server: McpServer, context?: McpContext) {
 
             // Build metadata line
             const metaParts: string[] = [];
-            if (item.metadata?.file_name) metaParts.push(item.metadata.file_name);
-            if (item.metadata?.page) metaParts.push(`Page: ${item.metadata.page}`);
-            if (item.metadata?.type) metaParts.push(`Type: ${item.metadata.type}`);
+            if (item.metadata?.file_name)
+              metaParts.push(item.metadata.file_name);
+            if (item.metadata?.page)
+              metaParts.push(`Page: ${item.metadata.page}`);
+            if (item.metadata?.type)
+              metaParts.push(`Type: ${item.metadata.type}`);
             const metaLine = metaParts.length > 0 ? metaParts.join(" | ") : "";
 
             // Content with fallback chain
@@ -121,7 +126,9 @@ export function registerSearchTool(server: McpServer, context?: McpContext) {
               item.metadata?.text ??
               "(no content)";
 
-            outputParts.push(`\n### ${item.number}. ${title} (Score: ${score})`);
+            outputParts.push(
+              `\n### ${item.number}. ${title} (Score: ${score})`,
+            );
             if (metaLine) outputParts.push(metaLine);
             outputParts.push(String(content));
           });
@@ -131,13 +138,16 @@ export function registerSearchTool(server: McpServer, context?: McpContext) {
           content: [
             {
               type: "text" as const,
-              text: outputParts.length > 0 ? outputParts.join("\n") : "No results found",
+              text:
+                outputParts.length > 0
+                  ? outputParts.join("\n")
+                  : "No results found",
             },
           ],
         };
       } catch (error) {
         return formatSearchError(error, { projectId, query: args.query });
       }
-    }
+    },
   );
 }
