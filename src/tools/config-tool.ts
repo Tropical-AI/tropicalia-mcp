@@ -5,16 +5,17 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { BASE_URL, getProject, getApiKey } from "../config/constants.js";
 import { maskApiKey } from "../utils/error-handling.js";
+import type { McpContext } from "../api/types.js";
 
-export function registerConfigTool(server: McpServer) {
+export function registerConfigTool(server: McpServer, context?: McpContext) {
   server.tool(
     "get_config",
     "Get current Tropicalia MCP configuration",
     {},
     () => {
       const baseUrl = BASE_URL;
-      const project = getProject() || "not set";
-      const apiKey = getApiKey();
+      const project = context?.projectId ?? (getProject() || "not set");
+      const apiKey = context?.apiKey ?? getApiKey();
 
       const text = `Tropicalia MCP Configuration:
 - Base URL: ${baseUrl}

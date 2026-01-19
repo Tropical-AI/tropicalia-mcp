@@ -41,3 +41,8 @@ export interface ApiError {
   detail: string;
   status_code?: number;
 }
+
+export interface McpContext {
+  projectId: string;
+  apiKey: string;
+}

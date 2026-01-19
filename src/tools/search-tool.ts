@@ -7,6 +7,7 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { TropicaliaClient } from "../api/client.js";
 import { getApiKey, getProject } from "../config/constants.js";
 import { formatSearchError } from "../utils/error-handling.js";
+import type { McpContext } from "../api/types.js";
 
 const TOOL_DESCRIPTION = `Search documents in a Tropicalia project.
 
@@ -55,14 +56,14 @@ const SearchArgsSchema = z.object({
 
 type SearchArgs = z.infer<typeof SearchArgsSchema>;
 
-export function registerSearchTool(server: McpServer) {
+export function registerSearchTool(server: McpServer, context?: McpContext) {
   server.tool(
     "search",
     TOOL_DESCRIPTION,
     SearchArgsSchema.shape,
     async (args: SearchArgs) => {
-      const apiKey = getApiKey();
-      const projectId = getProject();
+      const apiKey = context?.apiKey ?? getApiKey();
+      const projectId = context?.projectId ?? getProject();
 
       if (!apiKey) {
         return formatSearchError(
